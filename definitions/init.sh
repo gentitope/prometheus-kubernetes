@@ -1,8 +1,10 @@
 #!/bin/bash
 
-GRAFANA_VERSION=3.1.1
-PROMETHEUS_VERSION=v1.3.1
+GRAFANA_VERSION=4.0.2
+PROMETHEUS_VERSION=v1.4.1
 DOCKER_USER=camil
+HTPASS=`zgrep -h ' install ' /var/log/dpkg.log* | sort | awk '{print $4}' | grep apache2-utils`
+RESULT=$?
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 ORANGE='\033[0;33m'
@@ -14,6 +16,12 @@ tput sgr0
 
 #create a separate namespace for monitoring
 kubectl create namespace monitoring
+
+if [ $RESULT -eq 0 ]; then
+  echo apaches-utils installed
+else
+  sudo apt-get install apache2-utils -y
+fi
 
 echo
 #Set username and password for basic-auth
